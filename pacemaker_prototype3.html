@@ -1,0 +1,598 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+:root{
+  --wp:#D4845A;--wpl:#F5E6DC;--wps:#8B6E5A;--wpa:#E8A87C;
+  --wt:#3D2B1F;--wtm:#9B7E6E;--wb:#EDD9C8;--wbg:#FDF8F3;
+  --wc:#FFFBF7;--wtg:#FFF0E6;--wtt:#C46B3A;
+  --fs-xs:12px;--fs-sm:14px;--fs-md:16px;--fs-lg:18px;--fs-xl:22px;--fs-2xl:28px;
+  --gnb-h:64px;--hdr-h:56px;--sw:240px;
+}
+html,body{width:100%;max-width:100%;overflow-x:hidden;font-family:-apple-system,'Apple SD Gothic Neo','Noto Sans KR',sans-serif;background:var(--wbg);color:var(--wt);}
+
+/* ── PAGE SYSTEM ── */
+.page{display:none;flex-direction:column;min-height:100vh;width:100%;}
+.page.active{display:flex;}
+
+/* ── BUTTONS ── */
+.btn-p{background:var(--wp);color:white;border:none;border-radius:14px;padding:17px;font-size:var(--fs-md);font-weight:500;cursor:pointer;width:100%;margin-top:6px;}
+.btn-p:active{opacity:.85;}
+.btn-o{background:transparent;color:var(--wp);border:1.5px solid var(--wp);border-radius:14px;padding:15px;font-size:var(--fs-md);font-weight:500;cursor:pointer;width:100%;margin-top:10px;}
+.btn-o:active{background:var(--wpl);}
+.btn-sm{border:1.5px solid var(--wb);border-radius:10px;padding:9px 16px;font-size:var(--fs-sm);background:transparent;color:var(--wp);cursor:pointer;}
+
+/* ── FORM ── */
+.lbl{font-size:var(--fs-sm);color:var(--wtm);margin-bottom:8px;display:block;margin-top:4px;}
+.inp{width:100%;border:1.5px solid var(--wb);border-radius:13px;padding:16px;font-size:var(--fs-md);background:var(--wbg);color:var(--wt);outline:none;margin-bottom:16px;-webkit-appearance:none;}
+.inp:focus{border-color:var(--wpa);}
+.sel{width:100%;border:1.5px solid var(--wb);border-radius:13px;padding:16px;font-size:var(--fs-md);background:var(--wbg);color:var(--wt);outline:none;margin-bottom:16px;-webkit-appearance:none;appearance:none;}
+.txta{width:100%;border:1.5px solid var(--wb);border-radius:13px;padding:16px;font-size:var(--fs-md);background:var(--wbg);color:var(--wt);outline:none;resize:none;line-height:1.7;-webkit-appearance:none;}
+.txta:focus,.inp:focus{border-color:var(--wpa);}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.og{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.og3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:14px;}
+.ob{border:1.5px solid var(--wb);border-radius:12px;padding:14px 10px;font-size:var(--fs-sm);background:var(--wc);color:var(--wtm);cursor:pointer;text-align:center;transition:all .15s;}
+.ob.s{border-color:var(--wp);background:var(--wpl);color:var(--wp);}
+.of{border:1.5px solid var(--wb);border-radius:13px;padding:16px;background:var(--wc);cursor:pointer;display:flex;align-items:center;gap:13px;margin-bottom:10px;transition:all .15s;}
+.of.s{border-color:var(--wp);background:var(--wpl);}
+.oc{width:22px;height:22px;border-radius:50%;border:2px solid var(--wb);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;}
+.of.s .oc{background:var(--wp);border-color:var(--wp);color:white;}
+.pg{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:18px;}
+.pb{border:1.5px solid var(--wb);border-radius:11px;padding:13px 6px;font-size:var(--fs-sm);background:var(--wc);color:var(--wtm);cursor:pointer;text-align:center;transition:all .15s;}
+.pb.s{border-color:var(--wp);background:var(--wpl);color:var(--wp);font-weight:500;}
+
+/* ── SPLASH ── */
+#page-splash .inner{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 28px;background:linear-gradient(160deg,#FDF3EA,#F4DCC8);}
+.sp-icon{width:90px;height:90px;background:var(--wp);border-radius:26px;display:flex;align-items:center;justify-content:center;margin:0 auto 26px;}
+.sp-icon svg{width:50px;height:50px;fill:white;}
+.sp-t{font-size:var(--fs-2xl);font-weight:500;margin-bottom:10px;}
+.sp-s{font-size:var(--fs-md);color:var(--wps);line-height:1.75;margin-bottom:48px;}
+.sp-btns{width:100%;max-width:360px;}
+
+/* ── AUTH ── */
+#page-login .inner,#page-signup .inner{flex:1;width:100%;display:flex;flex-direction:column;}
+
+/* 모바일: 카드 없이 전체화면 */
+.auth-body{flex:1;padding:28px 24px 40px;width:100%;}
+.auth-logo{display:flex;align-items:center;gap:12px;margin-bottom:30px;}
+.al-icon{width:38px;height:38px;background:var(--wp);border-radius:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.al-icon svg{width:21px;height:21px;fill:white;}
+.al-name{font-size:var(--fs-lg);font-weight:500;}
+.auth-t{font-size:var(--fs-xl);font-weight:500;margin-bottom:6px;}
+.auth-s{font-size:var(--fs-sm);color:var(--wtm);margin-bottom:26px;line-height:1.6;}
+.auth-sw{text-align:center;font-size:var(--fs-sm);color:var(--wtm);margin-top:20px;}
+.auth-lnk{color:var(--wp);cursor:pointer;font-weight:500;}
+
+/* 온보딩 */
+.step-dots{display:flex;gap:6px;margin-bottom:24px;}
+.sd{height:5px;border-radius:3px;flex:1;background:var(--wb);transition:background .3s;}
+.sd.d{background:var(--wp);}
+.ob-t{font-size:var(--fs-xl);font-weight:500;margin-bottom:6px;line-height:1.4;}
+.ob-s{font-size:var(--fs-sm);color:var(--wtm);margin-bottom:22px;line-height:1.6;}
+
+/* ── APP ── */
+#page-app{flex-direction:row;}
+
+/* 데스크탑 사이드바 */
+.sidebar{width:var(--sw);flex-shrink:0;background:var(--wc);border-right:1.5px solid var(--wb);display:flex;flex-direction:column;padding-bottom:20px;height:100vh;position:sticky;top:0;}
+.sb-logo{padding:22px 18px 18px;border-bottom:1.5px solid var(--wb);margin-bottom:6px;display:flex;align-items:center;gap:10px;}
+.sb-li{width:34px;height:34px;background:var(--wp);border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-li svg{width:19px;height:19px;fill:white;}
+.sb-ln{font-size:15px;font-weight:500;}
+.sb-ls{font-size:11px;color:var(--wtm);}
+.nsec{font-size:11px;color:var(--wtm);padding:14px 18px 5px;font-weight:500;letter-spacing:.5px;}
+.ni{display:flex;align-items:center;gap:11px;padding:11px 18px;cursor:pointer;font-size:var(--fs-sm);color:var(--wtm);margin:1px 7px;border-radius:9px;transition:background .15s;}
+.ni:hover,.ni.a{background:var(--wpl);color:var(--wp);}
+.ni.a{font-weight:500;}
+.nic{font-size:15px;width:18px;text-align:center;}
+.sb-bot{margin-top:auto;padding:14px 7px 0;border-top:1.5px solid var(--wb);}
+.uc{display:flex;align-items:center;gap:10px;padding:9px 11px;border-radius:9px;cursor:pointer;}
+.uc:hover{background:var(--wpl);}
+.av{width:32px;height:32px;border-radius:50%;background:var(--wp);display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:500;flex-shrink:0;}
+
+/* 메인 컬럼 */
+.main-col{flex:1;min-width:0;display:flex;flex-direction:column;min-height:100vh;}
+.topbar{padding:0 28px;height:60px;border-bottom:1.5px solid var(--wb);display:flex;align-items:center;justify-content:space-between;background:var(--wc);flex-shrink:0;position:sticky;top:0;z-index:10;}
+.tb-t{font-size:var(--fs-lg);font-weight:500;}
+.tb-r{display:flex;align-items:center;gap:10px;}
+.tb-date{font-size:12px;color:var(--wtm);}
+.tb-btn{border:none;border-radius:9px;padding:9px 15px;font-size:var(--fs-xs);background:var(--wp);color:white;cursor:pointer;font-weight:500;white-space:nowrap;}
+.tb-bto{border:1.5px solid var(--wb);border-radius:9px;padding:8px 15px;font-size:var(--fs-xs);background:transparent;color:var(--wp);cursor:pointer;white-space:nowrap;}
+.tb-bto:hover{background:var(--wpl);}
+
+/* 모바일 헤더 */
+.mob-hdr{display:none;height:var(--hdr-h);background:var(--wc);border-bottom:1.5px solid var(--wb);align-items:center;justify-content:center;padding:0 20px;flex-shrink:0;position:sticky;top:0;z-index:10;}
+.mob-hdr-t{font-size:var(--fs-lg);font-weight:500;}
+.mob-hdr-av{position:absolute;right:20px;}
+
+/* 콘텐츠 */
+.content{flex:1;padding:26px;}
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* 카드 & 그리드 */
+.card{background:var(--wc);border:1.5px solid var(--wb);border-radius:15px;padding:20px;}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-bottom:22px;}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+.ins-card{background:var(--wpl);border:1.5px solid #E8C8B0;border-radius:14px;padding:18px;margin-bottom:22px;}
+.stat-lbl{font-size:var(--fs-xs);color:var(--wtm);margin-bottom:5px;}
+.stat-val{font-size:24px;font-weight:500;}
+.stat-sub{font-size:11px;color:var(--wtm);margin-top:3px;}
+.sec-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+.sec-t{font-size:15px;font-weight:500;}
+.sec-a{font-size:var(--fs-xs);color:var(--wp);cursor:pointer;border:1.5px solid var(--wb);border-radius:8px;padding:6px 12px;background:transparent;}
+.gc{background:var(--wc);border:1.5px solid var(--wb);border-radius:14px;padding:18px;}
+.gc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;}
+.g-tag{font-size:11px;background:var(--wtg);color:var(--wtt);border-radius:20px;padding:4px 10px;font-weight:500;}
+.g-ttl{font-size:var(--fs-sm);font-weight:500;margin-bottom:10px;line-height:1.55;}
+.prog{height:6px;background:var(--wb);border-radius:3px;overflow:hidden;}
+.pf{height:100%;background:var(--wp);border-radius:3px;}
+.g-meta{display:flex;justify-content:space-between;margin-top:8px;}
+.gmd{font-size:11px;color:var(--wtm);}
+.gmp{font-size:11px;color:var(--wp);font-weight:500;}
+.add-c{border:2px dashed var(--wb);border-radius:14px;padding:28px;display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer;}
+.add-c:hover{border-color:var(--wpa);}
+.add-ic{width:42px;height:42px;background:var(--wpl);border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--wp);font-size:20px;}
+
+/* 가이드라인 */
+.guide{background:var(--wpl);border-left:3px solid var(--wp);border-radius:0 10px 10px 0;padding:13px 15px;margin-bottom:18px;}
+.guide-t{font-size:var(--fs-sm);color:var(--wps);line-height:1.6;}
+.ai-badge{display:inline-flex;align-items:center;gap:6px;background:var(--wpl);border-radius:20px;padding:6px 14px;font-size:var(--fs-xs);color:var(--wp);margin-bottom:14px;}
+.aidot{width:7px;height:7px;background:var(--wp);border-radius:50%;animation:pulse 1.5s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+.sv-prog{height:4px;background:var(--wb);border-radius:2px;margin-bottom:20px;}
+.svpf{height:100%;background:var(--wp);border-radius:2px;transition:width .4s;}
+
+/* 추천 */
+.rec3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;}
+.rsect{font-size:11px;font-weight:500;color:var(--wtm);letter-spacing:.5px;margin-bottom:9px;}
+.ri{border:1.5px solid var(--wb);border-radius:11px;padding:13px;margin-bottom:8px;cursor:pointer;display:flex;align-items:center;gap:10px;background:var(--wc);transition:all .15s;}
+.ri:hover,.ri.c{border-color:var(--wp);background:var(--wpl);}
+.rck{width:18px;height:18px;border-radius:50%;border:2px solid var(--wb);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;}
+.ri.c .rck{background:var(--wp);border-color:var(--wp);color:white;}
+
+/* 회고 */
+.ref-row{display:grid;grid-template-columns:1fr 300px;gap:18px;}
+.side-c{background:var(--wc);border:1.5px solid var(--wb);border-radius:14px;padding:18px;margin-bottom:14px;}
+.gchip{display:flex;align-items:center;gap:8px;background:var(--wtg);border-radius:9px;padding:10px 13px;margin-bottom:8px;}
+.chd{width:8px;height:8px;background:var(--wp);border-radius:50%;flex-shrink:0;}
+.cht{font-size:var(--fs-xs);color:var(--wtt);line-height:1.4;}
+.mood-r{display:flex;gap:8px;}
+.mb{flex:1;border:1.5px solid var(--wb);border-radius:10px;padding:13px 4px;font-size:20px;background:var(--wc);cursor:pointer;text-align:center;transition:all .15s;}
+.mb.s{border-color:var(--wp);background:var(--wpl);}
+.done-c{background:#EAF5EF;border:1.5px solid #B8E6CF;border-radius:13px;padding:20px;text-align:center;margin-top:18px;}
+
+/* 모달 */
+.mod-bg{position:fixed;inset:0;background:rgba(61,43,31,.45);z-index:600;display:flex;align-items:flex-end;justify-content:center;}
+.mod-sh{background:var(--wc);border-radius:22px 22px 0 0;padding:0 22px 40px;width:100%;max-width:500px;}
+.mod-hnd{width:40px;height:4px;background:var(--wb);border-radius:2px;margin:14px auto 20px;}
+.mod-t{font-size:var(--fs-lg);font-weight:500;margin-bottom:5px;}
+.mod-s{font-size:var(--fs-sm);color:var(--wtm);margin-bottom:20px;line-height:1.6;}
+.mo{border:1.5px solid var(--wb);border-radius:14px;padding:16px 17px;margin-bottom:10px;cursor:pointer;display:flex;align-items:center;gap:14px;background:var(--wbg);transition:all .15s;}
+.mo:hover{border-color:var(--wpa);background:var(--wpl);}
+.mo-ic{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;}
+.mo-t{font-size:var(--fs-md);font-weight:500;margin-bottom:3px;}
+.mo-s{font-size:var(--fs-xs);color:var(--wtm);line-height:1.4;}
+
+/* 데스크탑 FAB */
+.d-fab{position:fixed;bottom:30px;right:30px;width:54px;height:54px;background:var(--wp);border-radius:50%;border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;z-index:200;box-shadow:0 4px 16px rgba(212,132,90,.35);}
+
+/* ── 하단 GNB (모바일) ── */
+.bottom-gnb{
+  display:none;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:var(--gnb-h);
+  background:var(--wc);
+  border-top:1.5px solid var(--wb);
+  z-index:300;
+}
+.gnb-inner{display:flex;height:100%;}
+.gi{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;background:transparent;border:none;color:var(--wtm);padding:0;}
+.gi.a{color:var(--wp);}
+.gi-ic{font-size:22px;line-height:1;}
+.gi-lbl{font-size:10px;font-weight:500;}
+/* 중앙 FAB GNB */
+.gnb-fab-wrap{flex:1;display:flex;align-items:center;justify-content:center;position:relative;}
+.gnb-fab{width:54px;height:54px;background:var(--wp);border-radius:50%;border:none;cursor:pointer;font-size:22px;display:flex;align-items:center;justify-content:center;position:absolute;top:-20px;box-shadow:0 4px 14px rgba(212,132,90,.4);}
+.gnb-fab-lbl{font-size:10px;font-weight:500;color:var(--wp);margin-top:20px;}
+
+/* ── BREAKPOINTS ── */
+@media(max-width:767px){
+  /* 앱 레이아웃 */
+  #page-app{flex-direction:column !important;}
+  .sidebar{display:none !important;}
+  .topbar{display:none !important;}
+  .d-fab{display:none !important;}
+  .mob-hdr{display:flex !important;}
+  .bottom-gnb{display:block !important;}
+  .content{padding:18px 16px calc(var(--gnb-h) + 20px);}
+
+  /* 인증 */
+  .auth-body{padding:24px 20px 40px;}
+
+  /* 그리드 */
+  .g3{grid-template-columns:1fr 1fr;}
+  .g2{grid-template-columns:1fr;}
+  .rec3{grid-template-columns:1fr;}
+  .ref-row{grid-template-columns:1fr;}
+  .pg{grid-template-columns:repeat(4,1fr);}
+  .row2{grid-template-columns:1fr 1fr;}
+
+  /* stat 카드 간결하게 */
+  .stat-val{font-size:20px;}
+}
+@media(min-width:768px) and (max-width:1100px){
+  :root{--sw:200px;}
+  .g3{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .ref-row{grid-template-columns:1fr;}
+  .content{padding:22px;}
+}
+@media(min-width:768px){
+  /* PC: 인증 화면을 카드 스타일로 */
+  #page-login .inner,#page-signup .inner{align-items:center;justify-content:center;background:var(--wbg);}
+  .auth-body{max-width:480px;background:var(--wc);border:1.5px solid var(--wb);border-radius:22px;padding:40px 36px;margin:32px 0;}
+}
+</style>
+
+<!-- SPLASH -->
+<div class="page active" id="page-splash">
+  <div class="inner">
+    <div class="sp-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4a2 2 0 110 4 2 2 0 010-4zm0 12c-2.67 0-5.01-1.34-6.4-3.37.03-2.12 4.28-3.29 6.4-3.29s6.37 1.17 6.4 3.29C17.01 16.66 14.67 18 12 18z"/></svg></div>
+    <div class="sp-t">페이스메이커</div>
+    <div class="sp-s">나만의 성장을 설계하고,<br>완주까지 함께하는 당신의 페이스메이커</div>
+    <div class="sp-btns">
+      <button class="btn-p" onclick="goPage('page-signup')">시작하기</button>
+      <button class="btn-o" onclick="goPage('page-login')">이미 계정이 있어요</button>
+    </div>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div class="page" id="page-login">
+  <div class="inner" style="flex:1;display:flex;flex-direction:column;">
+    <div class="auth-body">
+      <div class="auth-logo"><div class="al-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4a2 2 0 110 4 2 2 0 010-4zm0 12c-2.67 0-5.01-1.34-6.4-3.37.03-2.12 4.28-3.29 6.4-3.29s6.37 1.17 6.4 3.29C17.01 16.66 14.67 18 12 18z"/></svg></div><div class="al-name">페이스메이커</div></div>
+      <div class="auth-t">다시 오셨군요! 👋</div>
+      <div class="auth-s">목표를 향한 여정을 이어가봐요</div>
+      <label class="lbl">이메일</label><input class="inp" type="email" placeholder="example@email.com"/>
+      <label class="lbl">비밀번호</label><input class="inp" type="password" placeholder="비밀번호를 입력해주세요"/>
+      <button class="btn-p" onclick="goPage('page-app')">로그인</button>
+      <div class="auth-sw">계정이 없으신가요? <span class="auth-lnk" onclick="goPage('page-signup')">회원가입</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SIGNUP -->
+<div class="page" id="page-signup">
+  <div class="inner" style="flex:1;display:flex;flex-direction:column;">
+    <div class="auth-body">
+      <div class="auth-logo"><div class="al-icon"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4a2 2 0 110 4 2 2 0 010-4zm0 12c-2.67 0-5.01-1.34-6.4-3.37.03-2.12 4.28-3.29 6.4-3.29s6.37 1.17 6.4 3.29C17.01 16.66 14.67 18 12 18z"/></svg></div><div class="al-name">페이스메이커</div></div>
+      <div class="step-dots" id="sdots"><div class="sd d"></div><div class="sd"></div><div class="sd"></div><div class="sd"></div></div>
+
+      <div id="su1">
+        <div class="ob-t">반가워요!<br>기본 정보를 알려주세요</div>
+        <div class="ob-s">더 잘 맞는 목표를 찾기 위해 필요해요</div>
+        <label class="lbl">이름</label><input class="inp" type="text" placeholder="이름을 입력해주세요"/>
+        <label class="lbl">이메일</label><input class="inp" type="email" placeholder="example@email.com"/>
+        <label class="lbl">비밀번호</label><input class="inp" type="password" placeholder="8자 이상 입력해주세요"/>
+        <div class="row2">
+          <div><label class="lbl">생년월일</label><input class="inp" type="date"/></div>
+          <div><label class="lbl">성별</label>
+            <div class="og" style="grid-template-columns:1fr 1fr;margin-bottom:0;">
+              <div class="ob" onclick="so(this,'g1')">여성</div><div class="ob" onclick="so(this,'g1')">남성</div>
+              <div class="ob" onclick="so(this,'g1')">논바이너리</div><div class="ob" onclick="so(this,'g1')">선택 안함</div>
+            </div>
+          </div>
+        </div>
+        <button class="btn-p" style="margin-top:20px;" onclick="suStep(2)">다음</button>
+        <div class="auth-sw">이미 계정이 있으신가요? <span class="auth-lnk" onclick="goPage('page-login')">로그인</span></div>
+      </div>
+
+      <div id="su2" style="display:none;">
+        <div class="ob-t">직업과 경력을<br>알려주세요</div>
+        <div class="ob-s">맞춤형 커리어 목표 설문에 활용돼요</div>
+        <label class="lbl">직업</label>
+        <select class="sel"><option value="">직업을 선택해주세요</option><option>개발자 / 엔지니어</option><option>디자이너</option><option>기획자 / PM</option><option>마케터</option><option>데이터 분석가</option><option>창업가 / 프리랜서</option><option>학생</option><option>기타</option></select>
+        <label class="lbl">연차</label>
+        <div class="og"><div class="ob" onclick="so(this,'ex')">신입 (0-1년)</div><div class="ob" onclick="so(this,'ex')">주니어 (2-4년)</div><div class="ob" onclick="so(this,'ex')">미드 (5-7년)</div><div class="ob" onclick="so(this,'ex')">시니어 (8년+)</div></div>
+        <button class="btn-p" onclick="suStep(3)">다음</button><button class="btn-o" onclick="suStep(1)">이전</button>
+      </div>
+
+      <div id="su3" style="display:none;">
+        <div class="ob-t">나는 어떤 사람인가요?</div>
+        <div class="ob-s">성격과 강점을 선택해주세요 (복수 선택 가능)</div>
+        <label class="lbl" style="margin-bottom:9px;">성격</label>
+        <div class="og3"><div class="ob" onclick="this.classList.toggle('s')">계획적</div><div class="ob" onclick="this.classList.toggle('s')">즉흥적</div><div class="ob" onclick="this.classList.toggle('s')">꼼꼼함</div><div class="ob" onclick="this.classList.toggle('s')">대담함</div><div class="ob" onclick="this.classList.toggle('s')">공감형</div><div class="ob" onclick="this.classList.toggle('s')">분석형</div></div>
+        <label class="lbl" style="margin-bottom:9px;">강점</label>
+        <div class="og3"><div class="ob" onclick="this.classList.toggle('s')">리더십</div><div class="ob" onclick="this.classList.toggle('s')">창의성</div><div class="ob" onclick="this.classList.toggle('s')">실행력</div><div class="ob" onclick="this.classList.toggle('s')">소통력</div><div class="ob" onclick="this.classList.toggle('s')">전문성</div><div class="ob" onclick="this.classList.toggle('s')">지속성</div></div>
+        <button class="btn-p" style="margin-top:8px;" onclick="suStep(4)">다음</button><button class="btn-o" onclick="suStep(2)">이전</button>
+      </div>
+
+      <div id="su4" style="display:none;">
+        <div class="ob-t">어떤 분야에<br>흥미가 있나요?</div>
+        <div class="ob-s">관심 있는 모든 항목을 선택해주세요</div>
+        <div class="of" onclick="this.classList.toggle('s')"><div class="oc">✓</div><div><div style="font-size:var(--fs-md);font-weight:500;">커리어 성장</div><div style="font-size:var(--fs-xs);color:var(--wtm);margin-top:2px;">직무 역량, 승진, 커리어 전환</div></div></div>
+        <div class="of" onclick="this.classList.toggle('s')"><div class="oc">✓</div><div><div style="font-size:var(--fs-md);font-weight:500;">자기계발 · 학습</div><div style="font-size:var(--fs-xs);color:var(--wtm);margin-top:2px;">독서, 언어, 새로운 스킬 습득</div></div></div>
+        <div class="of" onclick="this.classList.toggle('s')"><div class="oc">✓</div><div><div style="font-size:var(--fs-md);font-weight:500;">건강 · 웰빙</div><div style="font-size:var(--fs-xs);color:var(--wtm);margin-top:2px;">운동, 식습관, 수면, 멘탈케어</div></div></div>
+        <div class="of" onclick="this.classList.toggle('s')"><div class="oc">✓</div><div><div style="font-size:var(--fs-md);font-weight:500;">관계 · 소통</div><div style="font-size:var(--fs-xs);color:var(--wtm);margin-top:2px;">네트워킹, 가족, 친구, 커뮤니티</div></div></div>
+        <div class="of" onclick="this.classList.toggle('s')"><div class="oc">✓</div><div><div style="font-size:var(--fs-md);font-weight:500;">재정 · 부</div><div style="font-size:var(--fs-xs);color:var(--wtm);margin-top:2px;">저축, 투자, 재정적 독립</div></div></div>
+        <button class="btn-p" style="margin-top:18px;" onclick="goPage('page-app')">페이스메이커 시작하기 🚀</button>
+        <button class="btn-o" onclick="suStep(3)">이전</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="page" id="page-app">
+  <!-- 모바일 헤더 -->
+  <div class="mob-hdr" id="mob-hdr" style="position:relative;">
+    <div class="mob-hdr-t" id="mob-t">홈</div>
+    <div class="mob-hdr-av"><div class="av">나</div></div>
+  </div>
+
+  <!-- 데스크탑 사이드바 + 메인 -->
+  <div style="display:flex;flex:1;min-height:0;">
+    <nav class="sidebar">
+      <div class="sb-logo"><div class="sb-li"><svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 4a2 2 0 110 4 2 2 0 010-4zm0 12c-2.67 0-5.01-1.34-6.4-3.37.03-2.12 4.28-3.29 6.4-3.29s6.37 1.17 6.4 3.29C17.01 16.66 14.67 18 12 18z"/></svg></div><div><div class="sb-ln">페이스메이커</div><div class="sb-ls">나만의 성장 파트너</div></div></div>
+      <div class="nsec">메인</div>
+      <div class="ni a" id="sni-home" onclick="sp('home',this)"><span class="nic">🏠</span>홈</div>
+      <div class="ni" id="sni-goals" onclick="sp('goals',this)"><span class="nic">🎯</span>나의 목표</div>
+      <div class="ni" id="sni-reflection" onclick="sp('reflection',this)"><span class="nic">✏️</span>회고 작성</div>
+      <div class="nsec">설정</div>
+      <div class="ni" id="sni-profile" onclick="sp('profile',this)"><span class="nic">👤</span>프로필</div>
+      <div class="sb-bot"><div class="uc"><div class="av">나</div><div><div style="font-size:13px;font-weight:500;">김지은</div><div style="font-size:11px;color:var(--wtm);">PM · 3년차</div></div></div></div>
+    </nav>
+
+    <div class="main-col">
+      <div class="topbar">
+        <div class="tb-t" id="tb-t">홈</div>
+        <div class="tb-r">
+          <div class="tb-date" id="tb-date"></div>
+          <button class="tb-bto" onclick="sp('goals',null);openMod()">+ 목표 추가</button>
+          <button class="tb-btn" onclick="sp('reflection',null)">✏️ 회고 작성</button>
+        </div>
+      </div>
+
+      <div class="content">
+        <!-- HOME -->
+        <div class="panel active" id="panel-home">
+          <div class="ins-card"><div style="font-size:13px;color:var(--wps);font-weight:500;margin-bottom:5px;">✨ 오늘의 인사이트</div><div style="font-size:var(--fs-md);color:var(--wt);line-height:1.6;">"작은 진전이 매일 쌓이면, 언젠가 엄청난 변화가 됩니다."</div></div>
+          <div class="g3">
+            <div class="card"><div class="stat-lbl">진행 중인 목표</div><div class="stat-val">2</div><div class="stat-sub">최대 3개 설정 가능</div></div>
+            <div class="card"><div class="stat-lbl">연속 회고 일수</div><div class="stat-val">7일</div><div class="stat-sub">이번 주 전부 기록 완료</div></div>
+            <div class="card"><div class="stat-lbl">평균 달성률</div><div class="stat-val">50%</div><div class="stat-sub">지난주보다 +12%</div></div>
+          </div>
+          <div class="sec-hd"><div class="sec-t">나의 목표</div><button class="sec-a" onclick="sp('goals',null)">목표 관리</button></div>
+          <div class="g2">
+            <div class="gc"><div class="gc-top"><span class="g-tag">커리어 성장</span><span style="font-size:11px;color:var(--wtm);">D-52</span></div><div class="g-ttl">사람들에게 이로운 영향력을 끼치는 서비스를 만들고 싶습니다</div><div class="prog"><div class="pf" style="width:38%"></div></div><div class="g-meta"><span class="gmd">3개월 · 4월 7일 시작</span><span class="gmp">38%</span></div></div>
+            <div class="gc"><div class="gc-top"><span class="g-tag">자기계발</span><span style="font-size:11px;color:var(--wtm);">D-18</span></div><div class="g-ttl">매일 책 20페이지를 읽는 독서 습관을 만들고 싶습니다</div><div class="prog"><div class="pf" style="width:62%"></div></div><div class="g-meta"><span class="gmd">1개월 · 3월 20일 시작</span><span class="gmp">62%</span></div></div>
+          </div>
+          <div style="margin-top:14px;"><div class="add-c" onclick="openMod()"><div class="add-ic">+</div><div style="font-size:var(--fs-sm);color:var(--wtm);">새 목표 추가하기 (최대 3개)</div></div></div>
+        </div>
+
+        <!-- GOALS -->
+        <div class="panel" id="panel-goals">
+          <div id="gv-list">
+            <div class="guide"><div class="guide-t">목표는 <strong>동사</strong>로 작성해주세요<br>예) "나는 사람들에게 이로운 영향력을 끼치는 서비스를 만들고 싶습니다"</div></div>
+            <div class="g2" style="margin-top:14px;">
+              <div class="gc"><div class="gc-top"><span class="g-tag">커리어 성장</span><span style="font-size:11px;color:var(--wtm);">D-52</span></div><div class="g-ttl">사람들에게 이로운 영향력을 끼치는 서비스를 만들고 싶습니다</div><div class="prog"><div class="pf" style="width:38%"></div></div><div class="g-meta"><span class="gmd">3개월 · 4월 7일</span><span class="gmp">38%</span></div></div>
+              <div class="gc"><div class="gc-top"><span class="g-tag">자기계발</span><span style="font-size:11px;color:var(--wtm);">D-18</span></div><div class="g-ttl">매일 책 20페이지를 읽는 독서 습관을 만들고 싶습니다</div><div class="prog"><div class="pf" style="width:62%"></div></div><div class="g-meta"><span class="gmd">1개월 · 3월 20일</span><span class="gmp">62%</span></div></div>
+              <div class="add-c" onclick="openMod()"><div class="add-ic">+</div><div style="font-size:var(--fs-sm);color:var(--wtm);">새 목표 추가하기</div></div>
+            </div>
+          </div>
+          <div id="gv-write" style="display:none;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;"><button class="btn-sm" onclick="showGV('list')">← 목록</button><div style="font-size:var(--fs-lg);font-weight:500;">목표 직접 작성</div></div>
+            <div class="card">
+              <div class="guide" style="margin-bottom:16px;"><div class="guide-t">목표는 <strong>동사</strong>로 작성해주세요</div></div>
+              <label class="lbl">나의 목표</label>
+              <textarea class="txta" style="min-height:110px;" placeholder="나는 ____________ 하고 싶습니다"></textarea>
+              <label class="lbl" style="margin-top:14px;">목표 기간</label>
+              <div class="pg"><div class="pb" onclick="sp2(this)">2주</div><div class="pb s" onclick="sp2(this)">1개월</div><div class="pb" onclick="sp2(this)">3개월</div><div class="pb" onclick="sp2(this)">6개월</div></div>
+              <label class="lbl">태그</label>
+              <div class="og"><div class="ob" onclick="so(this,'tg')">커리어</div><div class="ob" onclick="so(this,'tg')">자기계발</div><div class="ob" onclick="so(this,'tg')">건강</div><div class="ob" onclick="so(this,'tg')">관계</div></div>
+              <button class="btn-p" onclick="showGV('list')">목표 저장하기</button>
+            </div>
+          </div>
+          <div id="gv-survey" style="display:none;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;"><button class="btn-sm" onclick="showGV('list')">← 목록</button><div style="font-size:var(--fs-lg);font-weight:500;">AI 커리어 설문</div></div>
+            <div class="card">
+              <div class="ai-badge"><div class="aidot"></div>AI가 분석 중이에요</div>
+              <div class="sv-prog"><div class="svpf" id="svp" style="width:20%"></div></div>
+              <div style="font-size:var(--fs-xs);color:var(--wtm);margin-bottom:8px;" id="svqn">질문 1 / 5</div>
+              <div style="font-size:var(--fs-lg);font-weight:500;margin-bottom:20px;line-height:1.5;" id="svqt"></div>
+              <div id="svop"></div>
+            </div>
+          </div>
+          <div id="gv-rec" style="display:none;">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px;"><button class="btn-sm" onclick="showGV('list')">← 목록</button><div style="font-size:var(--fs-lg);font-weight:500;">AI 맞춤 목표 추천</div></div>
+            <div style="background:#EEF6FF;border:1.5px solid #C9DFFF;border-radius:13px;padding:14px 16px;margin-bottom:18px;"><div style="font-size:var(--fs-xs);color:#3B7DD8;font-weight:500;margin-bottom:4px;">🤖 AI 분석 결과</div><div style="font-size:var(--fs-sm);color:#1A4F9B;line-height:1.6;">설문 결과, <strong>전문성과 영향력</strong>을 중시하는 성향이에요!</div></div>
+            <div class="rec3">
+              <div><div class="rsect">HAVE — 갖고 싶은 것</div><div class="ri" onclick="this.classList.toggle('c')"><div style="font-size:var(--fs-sm);flex:1;line-height:1.5;">사이드 프로젝트로 첫 수익 만들기</div><div class="rck">✓</div></div><div class="ri" onclick="this.classList.toggle('c')"><div style="font-size:var(--fs-sm);flex:1;line-height:1.5;">전문 분야 강의 출시하기</div><div class="rck">✓</div></div></div>
+              <div><div class="rsect">BE — 되고 싶은 모습</div><div class="ri c" onclick="this.classList.toggle('c')"><div style="font-size:var(--fs-sm);flex:1;line-height:1.5;">팀에서 가장 신뢰받는 전문가</div><div class="rck">✓</div></div><div class="ri" onclick="this.classList.toggle('c')"><div style="font-size:var(--fs-sm);flex:1;line-height:1.5;">영향력 있는 서비스를 만드는 사람</div><div class="rck">✓</div></div></div>
+              <div><div class="rsect">DO — 하고 싶은 것</div><div class="ri" onclick="this.classList.toggle('c')"><div style="font-size:var(--fs-sm);flex:1;line-height:1.5;">매주 블로그 포스팅하기</div><div class="rck">✓</div></div><div class="ri" onclick="this.classList.toggle('c')"><div style="font-size:var(--fs-sm);flex:1;line-height:1.5;">분기마다 커리어 네트워킹 참여</div><div class="rck">✓</div></div></div>
+            </div>
+            <div class="card" style="margin-top:18px;">
+              <label class="lbl">또는 직접 입력하기</label>
+              <input class="inp" type="text" placeholder="나는 ____________ 하고 싶습니다"/>
+              <label class="lbl">목표 기간</label>
+              <div class="pg"><div class="pb" onclick="sp2(this)">1개월</div><div class="pb s" onclick="sp2(this)">3개월</div><div class="pb" onclick="sp2(this)">6개월</div><div class="pb" onclick="sp2(this)">1년</div></div>
+              <button class="btn-p" onclick="showGV('list')">목표 설정 완료 🎉</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- REFLECTION -->
+        <div class="panel" id="panel-reflection">
+          <div class="ref-row">
+            <div class="card">
+              <div style="font-size:var(--fs-xl);font-weight:500;margin-bottom:6px;line-height:1.4;">오늘 당신의 하루는<br>어떠셨나요? 🌙</div>
+              <div style="font-size:var(--fs-sm);color:var(--wtm);margin-bottom:20px;line-height:1.6;">가벼운 내용이어도 좋아요. 작은 기록이 큰 성장이 됩니다.</div>
+              <label class="lbl">오늘의 회고</label>
+              <div style="position:relative;">
+                <textarea class="txta" id="rftxt" style="min-height:160px;padding-bottom:52px;" placeholder="오늘 어떤 일이 있었나요? 무엇을 배웠나요?"></textarea>
+                <div style="position:absolute;bottom:12px;right:12px;display:flex;gap:8px;">
+                  <div id="vbtn" onclick="tv()" style="width:38px;height:38px;border-radius:50%;border:1.5px solid var(--wb);background:var(--wbg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;">🎙️</div>
+                  <div style="width:38px;height:38px;border-radius:50%;border:1.5px solid var(--wb);background:var(--wbg);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;">😊</div>
+                </div>
+              </div>
+              <div id="vs" style="display:none;font-size:var(--fs-xs);color:#EF4444;margin-top:6px;">🔴 음성 녹음 중... 다시 누르면 종료</div>
+              <div style="margin-top:18px;"><label class="lbl">오늘 하루 기분은?</label>
+                <div class="mood-r"><div class="mb" onclick="so(this,'md')">😔</div><div class="mb" onclick="so(this,'md')">😐</div><div class="mb" onclick="so(this,'md')">🙂</div><div class="mb s" onclick="so(this,'md')">😊</div><div class="mb" onclick="so(this,'md')">🤩</div></div>
+              </div>
+              <button class="btn-p" onclick="saveRef()" style="margin-top:20px;">회고 저장하기</button>
+              <div id="rfdone" class="done-c" style="display:none;"><div style="font-size:28px;margin-bottom:8px;">🌱</div><div style="font-size:var(--fs-lg);font-weight:500;color:#2D6B4A;margin-bottom:4px;">오늘도 수고하셨어요!</div><div style="font-size:var(--fs-sm);color:#4B9A6E;line-height:1.6;">작은 기록들이 쌓여 큰 성장이 될 거예요.</div></div>
+            </div>
+            <div>
+              <div class="side-c">
+                <div class="lbl" style="margin-bottom:12px;">오늘의 목표 체크인</div>
+                <div class="gchip"><div class="chd"></div><div class="cht">사람들에게 이로운 영향력을 끼치는 서비스 만들기</div></div>
+                <div class="gchip"><div class="chd"></div><div class="cht">매일 책 20페이지 읽는 독서 습관 만들기</div></div>
+              </div>
+              <div class="side-c">
+                <div class="lbl" style="margin-bottom:12px;">최근 회고</div>
+                <div style="display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--wtm);margin-bottom:5px;"><span>04/06</span><span>😊</span></div>
+                <div style="font-size:var(--fs-xs);color:var(--wt);margin-bottom:12px;line-height:1.6;">오늘 팀 미팅에서 새로운 아이디어를 발표했다. 반응이 좋았고...</div>
+                <div style="display:flex;justify-content:space-between;font-size:var(--fs-xs);color:var(--wtm);margin-bottom:5px;"><span>04/05</span><span>🙂</span></div>
+                <div style="font-size:var(--fs-xs);color:var(--wt);line-height:1.6;">책 21페이지 완독. 목표 초과달성!</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFILE -->
+        <div class="panel" id="panel-profile">
+          <div style="max-width:540px;">
+            <div class="card" style="margin-bottom:14px;">
+              <div style="font-size:15px;font-weight:500;margin-bottom:16px;">기본 정보</div>
+              <div class="row2"><div><label class="lbl">이름</label><input class="inp" type="text" value="김지은"/></div><div><label class="lbl">생년월일</label><input class="inp" type="date" value="1995-03-15"/></div></div>
+              <label class="lbl">성별</label>
+              <div class="og"><div class="ob s" onclick="so(this,'pg')">여성</div><div class="ob" onclick="so(this,'pg')">남성</div><div class="ob" onclick="so(this,'pg')">논바이너리</div><div class="ob" onclick="so(this,'pg')">선택 안함</div></div>
+            </div>
+            <div class="card" style="margin-bottom:14px;">
+              <div style="font-size:15px;font-weight:500;margin-bottom:16px;">직업 정보</div>
+              <div class="row2"><div><label class="lbl">직업</label><select class="sel"><option>기획자 / PM</option><option>개발자</option><option>디자이너</option></select></div><div><label class="lbl">연차</label><div class="og"><div class="ob" onclick="so(this,'pe')">신입</div><div class="ob" onclick="so(this,'pe')">주니어</div><div class="ob s" onclick="so(this,'pe')">미드</div><div class="ob" onclick="so(this,'pe')">시니어</div></div></div></div>
+            </div>
+            <button class="btn-p">변경사항 저장하기</button>
+            <button class="btn-o" onclick="goPage('page-splash')">로그아웃</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 데스크탑 FAB -->
+  <button class="d-fab" onclick="sp('reflection',null)">✏️</button>
+
+  <!-- 하단 GNB — 모바일 전용, position:fixed -->
+  <div class="bottom-gnb">
+    <div class="gnb-inner">
+      <button class="gi a" id="gi-home" onclick="sp('home',this)"><div class="gi-ic">🏠</div><div class="gi-lbl">홈</div></button>
+      <button class="gi" id="gi-goals" onclick="sp('goals',this)"><div class="gi-ic">🎯</div><div class="gi-lbl">목표</div></button>
+      <div class="gnb-fab-wrap">
+        <button class="gnb-fab" onclick="sp('reflection',null);openMod()">✏️</button>
+        <div class="gnb-fab-lbl">회고</div>
+      </div>
+      <button class="gi" id="gi-reflection" onclick="sp('reflection',this)"><div class="gi-ic">📝</div><div class="gi-lbl">기록</div></button>
+      <button class="gi" id="gi-profile" onclick="sp('profile',this)"><div class="gi-ic">👤</div><div class="gi-lbl">프로필</div></button>
+    </div>
+  </div>
+</div>
+
+<!-- GOAL MODAL -->
+<div id="gmod" style="display:none;" class="mod-bg" onclick="closeMod()">
+  <div class="mod-sh" onclick="event.stopPropagation()">
+    <div class="mod-hnd"></div>
+    <div class="mod-t">어떻게 목표를 설정할까요?</div>
+    <div class="mod-s">나에게 맞는 방식으로 목표를 세워보세요</div>
+    <div class="mo" onclick="closeMod();showGV('write')"><div class="mo-ic" style="background:var(--wpl);">✏️</div><div><div class="mo-t">직접 작성하기</div><div class="mo-s">목표가 명확하다면 바로 입력해보세요</div></div><span style="color:var(--wtm);font-size:20px;margin-left:auto;">›</span></div>
+    <div class="mo" onclick="closeMod();showGV('survey')"><div class="mo-ic" style="background:#EEF6FF;">🤖</div><div><div class="mo-t">AI 설문으로 찾기</div><div class="mo-s">나에게 맞는 목표를 AI가 분석해서 추천해줘요</div></div><span style="color:var(--wtm);font-size:20px;margin-left:auto;">›</span></div>
+  </div>
+</div>
+
+<script>
+const SQS=[
+  {q:"지금 커리어에서 가장 중요하게 생각하는 것은?",opts:["전문성 깊이 키우기","리더십 & 영향력","새로운 도전 & 전환","워크-라이프 밸런스"]},
+  {q:"3년 후의 나를 상상하면?",opts:["업계 인정받는 전문가","팀을 이끄는 리더","나만의 사업 운영","균형 잡힌 삶"]},
+  {q:"성장할 때 가장 잘 맞는 방식은?",opts:["혼자 깊이 파고들기","프로젝트로 배우기","멘토에게 배우기","커뮤니티와 함께"]},
+  {q:"지금 커리어에서 가장 아쉬운 부분은?",opts:["기술적 깊이 부족","소통 & 관계 스킬","실행력 & 꾸준함","목표와 방향 불명확"]},
+  {q:"이 앱을 통해 가장 기대하는 것은?",opts:["명확한 목표 설정","꾸준한 실행 습관","객관적 자기 이해","동기부여 & 응원"]}
+];
+let svIdx=0,voiceOn=false;
+
+const TITLES={home:'홈',goals:'나의 목표',reflection:'회고 작성',profile:'프로필'};
+
+function goPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+function suStep(n){
+  for(let i=1;i<=4;i++) document.getElementById('su'+i).style.display=i===n?'block':'none';
+  document.querySelectorAll('#sdots .sd').forEach((d,i)=>d.classList.toggle('d',i<n));
+}
+
+function sp(id,el){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  // 사이드바
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('a'));
+  const sni=document.getElementById('sni-'+id);
+  if(sni) sni.classList.add('a');
+  // GNB
+  document.querySelectorAll('.gi').forEach(n=>n.classList.remove('a'));
+  const gi=document.getElementById('gi-'+id);
+  if(gi) gi.classList.add('a');
+  // 타이틀
+  const t=TITLES[id]||id;
+  const tbt=document.getElementById('tb-t');if(tbt)tbt.textContent=t;
+  const mbt=document.getElementById('mob-t');if(mbt)mbt.textContent=t;
+}
+
+function openMod(){document.getElementById('gmod').style.display='flex';}
+function closeMod(){document.getElementById('gmod').style.display='none';}
+
+function showGV(v){
+  ['list','write','survey','rec'].forEach(k=>document.getElementById('gv-'+k).style.display=k===v?'block':'none');
+  if(v==='survey'){svIdx=0;renderSV();}
+}
+
+function renderSV(){
+  const q=SQS[svIdx];
+  document.getElementById('svp').style.width=((svIdx+1)/5*100)+'%';
+  document.getElementById('svqn').textContent='질문 '+(svIdx+1)+' / 5';
+  document.getElementById('svqt').textContent=q.q;
+  document.getElementById('svop').innerHTML=q.opts.map(o=>`<div class="of" onclick="nextSV(this)"><div class="oc">✓</div><div style="font-size:var(--fs-md);">${o}</div></div>`).join('');
+}
+function nextSV(el){
+  el.classList.add('s');
+  el.querySelector('.oc').style.cssText='background:var(--wp);border-color:var(--wp);color:white;';
+  setTimeout(()=>{svIdx++;if(svIdx>=5)showGV('rec');else renderSV();},360);
+}
+
+function so(el,g){
+  const p=el.closest('.og,.og3,.mood-r');
+  if(p)p.querySelectorAll('.ob,.mb').forEach(b=>b.classList.remove('s'));
+  el.classList.add('s');
+}
+function sp2(el){
+  el.closest('.pg').querySelectorAll('.pb').forEach(b=>b.classList.remove('s'));
+  el.classList.add('s');
+}
+function tv(){
+  voiceOn=!voiceOn;
+  document.getElementById('vbtn').textContent=voiceOn?'⏹️':'🎙️';
+  document.getElementById('vs').style.display=voiceOn?'block':'none';
+  if(!voiceOn){const ta=document.getElementById('rftxt');if(!ta.value)ta.value='(음성 입력 내용이 표시됩니다)';}
+}
+function saveRef(){
+  const d=document.getElementById('rfdone');d.style.display='block';d.scrollIntoView({behavior:'smooth'});
+}
+
+const now=new Date();
+const days=['일','월','화','수','목','금','토'];
+const tbd=document.getElementById('tb-date');
+if(tbd)tbd.textContent=`${now.getFullYear()}년 ${now.getMonth()+1}월 ${now.getDate()}일 ${days[now.getDay()]}요일`;
+</script>
