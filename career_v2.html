@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커리어 코칭</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0eff5;display:flex;justify-content:center;align-items:flex-start;padding:32px 16px 48px;min-height:100vh}
+:root{
+  --bg:#fff;
+  --bg2:#f5f5f7;
+  --txt:#1a1a1a;
+  --txt2:#6b6b6b;
+  --bdr:rgba(0,0,0,0.1);
+  --bdr2:rgba(0,0,0,0.18);
+  --accent:#7F77DD;
+  --accent-l:#EEEDFE;
+  --accent-m:#AFA9EC;
+  --accent-d:#534AB7;
+  --green:#1D9E75;
+  --green-l:#E1F5EE;
+  --green-d:#0F6E56;
+  --amber:#854F0B;
+  --amber-l:#FAEEDA;
+  --blue:#185FA5;
+  --blue-l:#E6F1FB;
+  --red:#E24B4A;
+}
+
+/* ── Frame ── */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.phone-label{font-size:11px;font-weight:600;letter-spacing:.08em;color:#999;text-transform:uppercase}
+.phone-frame{background:#e2e1ea;border-radius:16px;padding:14px}
+.phone{width:375px;height:760px;background:var(--bg);border-radius:34px;border:0.5px solid var(--bdr2);overflow:hidden;display:flex;flex-direction:column;position:relative}
+
+/* ── Status Bar ── */
+.status-bar{display:flex;justify-content:space-between;align-items:center;padding:14px 22px 6px;flex-shrink:0}
+.status-time{font-size:13px;font-weight:600;color:var(--txt)}
+.status-icons{display:flex;gap:5px;align-items:center;font-size:11px;color:var(--txt)}
+
+/* ── Pages ── */
+.page{display:none;flex:1;flex-direction:column;overflow:hidden;position:relative}
+.page.active{display:flex}
+.scroll-area{flex:1;overflow-y:auto;padding:0 16px 88px}
+
+/* ── Tab Bar ── */
+.tab-bar{position:absolute;bottom:0;left:0;right:0;background:rgba(255,255,255,0.94);backdrop-filter:blur(14px);border-top:0.5px solid var(--bdr);display:flex;padding:8px 0 22px;flex-shrink:0;z-index:50}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;-webkit-tap-highlight-color:transparent}
+.tab-icon{width:24px;height:24px;display:flex;align-items:center;justify-content:center}
+.tab-label{font-size:10px;color:var(--txt2);transition:color .15s}
+.tab-item.active .tab-label{color:var(--accent);font-weight:600}
+
+/* ── FAB ── */
+.fab{position:absolute;bottom:80px;right:16px;width:50px;height:50px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 18px rgba(127,119,221,.38);transition:transform .15s,box-shadow .15s;z-index:40}
+.fab:active{transform:scale(.91);box-shadow:0 2px 8px rgba(127,119,221,.3)}
+
+/* ── Toast ── */
+.toast{position:absolute;bottom:82px;left:14px;right:14px;background:#1a1a1a;color:#fff;border-radius:14px;padding:11px 14px;display:flex;align-items:center;gap:10px;transform:translateY(70px);opacity:0;transition:all .3s cubic-bezier(.4,0,.2,1);z-index:60;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+.toast-icon{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.toast-body{font-size:13px;line-height:1.4}
+.toast-body strong{display:block;font-weight:600}
+.toast-body span{color:rgba(255,255,255,.6);font-size:12px}
+
+/* ── Cards & shared ── */
+.card{background:var(--bg);border:0.5px solid var(--bdr);border-radius:16px;padding:16px;margin-bottom:10px}
+.card-title{font-size:13px;font-weight:500;color:var(--txt2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.kw{padding:4px 11px;border-radius:20px;font-size:12px;font-weight:500}
+.kw-p{background:var(--accent-l);color:var(--accent-d)}
+.kw-t{background:var(--green-l);color:var(--green-d)}
+.kw-a{background:var(--amber-l);color:var(--amber)}
+.kw-b{background:var(--blue-l);color:var(--blue)}
+.kw-row{display:flex;flex-wrap:wrap;gap:5px}
+
+/* ── Comp bars ── */
+.comp-item{margin-bottom:9px}
+.comp-item:last-child{margin-bottom:0}
+.comp-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:4px}
+.comp-name{color:var(--txt);font-size:12px}
+.comp-pct{font-size:12px;font-weight:600;color:var(--accent-d)}
+.comp-track{height:5px;background:var(--bg2);border-radius:3px;overflow:hidden}
+.comp-fill{height:100%;border-radius:3px;background:var(--accent);transition:width .6s cubic-bezier(.4,0,.2,1)}
+
+/* ── Greeting ── */
+.greeting-wrap{padding:14px 0 8px}
+.greeting-date{font-size:11px;color:var(--txt2);font-weight:500;letter-spacing:.04em;margin-bottom:4px}
+.greeting-title{font-size:20px;font-weight:500;color:var(--txt);line-height:1.35}
+.greeting-sub{font-size:13px;color:var(--txt2);margin-top:3px}
+
+/* ── Goal Banner ── */
+.goal-banner{background:linear-gradient(135deg,#433A9E,#7F77DD);border-radius:16px;padding:16px;margin-bottom:10px;position:relative;overflow:hidden}
+.goal-banner::after{content:'';position:absolute;top:-24px;right:-16px;width:90px;height:90px;border-radius:50%;background:rgba(255,255,255,.06)}
+.goal-banner-label{font-size:10px;font-weight:600;color:rgba(255,255,255,.55);letter-spacing:.07em;text-transform:uppercase;margin-bottom:5px}
+.goal-banner-text{font-size:14px;color:#fff;font-weight:500;line-height:1.5;margin-bottom:10px}
+.goal-prog-wrap{display:flex;align-items:center;gap:10px}
+.goal-prog-track{flex:1;height:4px;background:rgba(255,255,255,.2);border-radius:2px;overflow:hidden}
+.goal-prog-fill{height:100%;border-radius:2px;background:#fff;width:34%}
+.goal-prog-pct{font-size:12px;color:rgba(255,255,255,.75);font-weight:500;white-space:nowrap}
+
+/* ── Streak ── */
+.streak-row{display:flex;gap:5px}
+.streak-day{display:flex;flex-direction:column;align-items:center;gap:4px;flex:1}
+.streak-dot{width:30px;height:30px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.streak-dot.done{background:var(--accent);box-shadow:0 2px 8px rgba(127,119,221,.3)}
+.streak-dot.today{border:2px solid var(--accent);background:var(--accent-l)}
+.streak-day-label{font-size:10px;color:var(--txt2)}
+
+/* ── Action Items ── */
+.section-label{font-size:11px;font-weight:600;color:var(--txt2);letter-spacing:.06em;text-transform:uppercase;margin:14px 0 8px}
+
+/* swipe container */
+.action-wrap{position:relative;margin-bottom:8px;overflow:hidden;border-radius:14px}
+.action-dismiss-bg{position:absolute;inset:0;background:#FFF0EE;border-radius:14px;display:flex;align-items:center;justify-content:flex-end;padding-right:18px}
+.dismiss-hint{font-size:11px;font-weight:600;color:var(--red);display:flex;align-items:center;gap:4px}
+
+.action-item{display:flex;align-items:flex-start;gap:11px;background:var(--bg);border:0.5px solid var(--bdr);border-radius:14px;padding:13px 12px;transition:transform .2s ease,opacity .25s;cursor:pointer;position:relative;z-index:1;-webkit-tap-highlight-color:transparent;user-select:none}
+.action-item.done{opacity:.5;background:var(--bg2);border-color:rgba(0,0,0,.05)}
+.action-item.dismissed{transform:translateX(110%);opacity:0}
+
+.action-check{width:21px;height:21px;border-radius:50%;border:1.5px solid var(--bdr2);display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:all .2s;background:var(--bg)}
+.action-item.done .action-check{background:var(--green);border-color:var(--green)}
+
+.action-content{flex:1;min-width:0}
+.action-title{font-size:13px;font-weight:500;color:var(--txt);line-height:1.45;margin-bottom:5px}
+.action-item.done .action-title{text-decoration:line-through;color:var(--txt2)}
+.action-meta{display:flex;align-items:center;gap:5px;flex-wrap:wrap}
+.action-tag{font-size:11px;padding:2px 8px;border-radius:9px;font-weight:500}
+.tag-routine{background:var(--accent-l);color:var(--accent-d)}
+.tag-once{background:var(--green-l);color:var(--green-d)}
+.tag-comp{background:var(--bg2);color:var(--txt2)}
+
+/* dismiss button on item */
+.action-dismiss-btn{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:background .15s;-webkit-tap-highlight-color:transparent}
+.action-dismiss-btn:active{background:#fde8e7}
+
+/* Refresh banner */
+.refresh-banner{background:var(--green-l);border:0.5px solid rgba(29,158,117,.18);border-radius:13px;padding:11px 13px;margin-bottom:8px;display:none;align-items:center;gap:10px}
+.refresh-banner-icon{width:30px;height:30px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.refresh-banner-txt{flex:1}
+.refresh-banner-title{font-size:13px;font-weight:500;color:var(--green-d)}
+.refresh-banner-sub{font-size:11px;color:var(--green-d);opacity:.7;margin-top:1px}
+.refresh-banner-btn{font-size:12px;font-weight:600;color:var(--green);cursor:pointer;padding:4px 0}
+
+/* ── Page: 회고 기록 ── */
+.retro-page-header{padding:14px 16px 10px;flex-shrink:0;border-bottom:0.5px solid var(--bdr)}
+.retro-page-header h2{font-size:17px;font-weight:500;color:var(--txt)}
+.retro-page-header p{font-size:12px;color:var(--txt2);margin-top:2px}
+
+/* ── FAB write sheet ── */
+.fab-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:70;opacity:0;pointer-events:none;transition:opacity .25s;border-radius:34px}
+.fab-overlay.open{opacity:1;pointer-events:auto}
+.fab-sheet{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:24px 24px 34px 34px;z-index:71;transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);max-height:86%}
+.fab-overlay.open .fab-sheet{transform:translateY(0)}
+.fab-sheet-handle{width:36px;height:4px;background:rgba(0,0,0,.13);border-radius:2px;margin:12px auto 0}
+.fab-sheet-header{padding:12px 16px 8px;display:flex;align-items:flex-start;justify-content:space-between}
+.fab-sheet-title{font-size:17px;font-weight:500;color:var(--txt)}
+.fab-sheet-date{font-size:12px;color:var(--txt2);margin-top:3px}
+.fab-sheet-close{width:28px;height:28px;border-radius:50%;background:var(--bg2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:16px;color:var(--txt2);line-height:1}
+.fab-sheet-body{padding:4px 16px 28px;overflow-y:auto;max-height:calc(86vh - 100px)}
+
+/* ── Retro guideline ── */
+.retro-guideline{background:var(--bg2);border-radius:14px;padding:12px 14px;margin-bottom:14px}
+.retro-guideline-title{font-size:11px;font-weight:600;color:var(--txt2);letter-spacing:.04em;margin-bottom:10px}
+.retro-guideline-items{display:flex;flex-direction:column;gap:7px}
+.retro-guideline-item{display:flex;align-items:center;gap:9px}
+.guideline-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;flex-shrink:0;letter-spacing:.02em}
+.guideline-badge.keep{background:var(--accent-l);color:var(--accent-d)}
+.guideline-badge.problem{background:var(--amber-l);color:var(--amber)}
+.guideline-badge.try{background:var(--green-l);color:var(--green-d)}
+.guideline-badge.free{background:#F0F0F5;color:var(--txt2)}
+.guideline-text{font-size:12px;color:var(--txt2);line-height:1.4}
+
+/* mode toggle */
+.mode-toggle{display:flex;background:var(--bg2);border-radius:10px;padding:3px;margin:10px 0 12px}
+.mode-btn{flex:1;padding:7px;border-radius:8px;font-size:12px;font-weight:500;color:var(--txt2);cursor:pointer;text-align:center;transition:all .15s;background:none;border:none;font-family:inherit}
+.mode-btn.active{background:#fff;color:var(--txt);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+
+/* KPT tabs */
+.kpt-tabs{display:flex;gap:5px;margin-bottom:12px}
+.kpt-tab{flex:1;padding:7px 4px;border-radius:10px;border:0.5px solid var(--bdr2);font-size:12px;font-weight:500;color:var(--txt2);cursor:pointer;text-align:center;transition:all .15s;background:none;font-family:inherit}
+.kpt-tab.active{background:var(--accent-l);border-color:var(--accent);color:var(--accent-d)}
+
+/* guide */
+.retro-guide{background:var(--bg2);border-radius:12px;padding:12px;margin-bottom:10px}
+.retro-guide-label{font-size:11px;font-weight:600;color:var(--txt2);letter-spacing:.04em;margin-bottom:3px}
+.retro-guide-q{font-size:13px;color:var(--txt);line-height:1.55}
+textarea.retro-input{width:100%;font-size:14px;padding:11px 12px;border-radius:12px;border:0.5px solid var(--bdr2);background:var(--bg);color:var(--txt);outline:none;font-family:inherit;resize:none;min-height:88px;line-height:1.65;transition:border-color .15s}
+textarea.retro-input:focus{border-color:var(--accent);box-shadow:0 0 0 2px rgba(127,119,221,.1)}
+
+.kw-map-preview{margin-top:10px}
+.kw-map-label{font-size:11px;color:var(--txt2);margin-bottom:6px}
+
+/* voice area */
+.voice-area{display:flex;flex-direction:column;align-items:center;padding:12px 0;gap:12px}
+.retro-waveform{display:flex;align-items:center;gap:3px;height:26px}
+.retro-wave-bar{width:3px;border-radius:2px;background:var(--accent);animation:wv .8s ease-in-out infinite}
+.retro-wave-bar:nth-child(1){height:6px;animation-delay:0s}
+.retro-wave-bar:nth-child(2){height:14px;animation-delay:.1s}
+.retro-wave-bar:nth-child(3){height:22px;animation-delay:.2s}
+.retro-wave-bar:nth-child(4){height:16px;animation-delay:.3s}
+.retro-wave-bar:nth-child(5){height:10px;animation-delay:.4s}
+.retro-wave-bar:nth-child(6){height:18px;animation-delay:.15s}
+.retro-waveform.idle .retro-wave-bar{animation:none;height:4px;opacity:.25}
+@keyframes wv{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.3)}}
+.retro-mic-btn{width:54px;height:54px;border-radius:50%;background:var(--accent);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .15s;box-shadow:0 3px 12px rgba(127,119,221,.35)}
+.retro-mic-btn:active{transform:scale(.92)}
+.retro-mic-btn.rec{background:var(--red);box-shadow:0 3px 12px rgba(226,75,74,.35)}
+.retro-voice-hint{font-size:12px;color:var(--txt2);text-align:center}
+
+.retro-save-btn{width:100%;padding:13px;background:var(--accent);color:#fff;border:none;border-radius:12px;font-size:14px;font-weight:500;cursor:pointer;margin-top:12px;font-family:inherit;transition:all .15s}
+.retro-save-btn:active{background:var(--accent-d);transform:scale(.98)}
+
+/* log items */
+.log-section-label{font-size:11px;font-weight:600;color:var(--txt2);letter-spacing:.05em;text-transform:uppercase;margin:16px 0 8px}
+.log-item{border-left:2px solid var(--accent-l);padding:8px 12px;margin-bottom:9px;border-radius:0 10px 10px 0;background:var(--bg2)}
+.log-item.problem{border-left-color:var(--amber-l)}
+.log-item.try{border-left-color:var(--green-l)}
+.log-date{font-size:10px;color:var(--txt2);margin-bottom:3px}
+.log-text{font-size:13px;color:var(--txt);line-height:1.5}
+.log-kws{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+
+/* kw filter */
+.kw-filter-label{font-size:11px;color:var(--txt2);margin-bottom:7px;font-weight:500}
+.kw-summary-card{background:var(--accent-l);border:0.5px solid rgba(127,119,221,.2);border-radius:14px;padding:13px;margin-bottom:10px;display:none}
+.kw-summary-title{font-size:12px;font-weight:600;color:var(--accent-d);margin-bottom:6px}
+.kw-summary-text{font-size:13px;color:var(--accent-d);line-height:1.65}
+.kw-summary-count{font-size:11px;color:var(--accent);margin-top:7px}
+
+/* ── Dismiss confirm sheet ── */
+.dismiss-overlay{position:absolute;inset:0;background:rgba(0,0,0,.4);z-index:70;opacity:0;pointer-events:none;transition:opacity .2s;border-radius:34px}
+.dismiss-overlay.open{opacity:1;pointer-events:auto}
+.dismiss-sheet{position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:22px 22px 34px 34px;padding:20px 16px 28px;z-index:71;transform:translateY(100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+.dismiss-overlay.open .dismiss-sheet{transform:translateY(0)}
+.dismiss-handle{width:34px;height:4px;background:rgba(0,0,0,.12);border-radius:2px;margin:0 auto 16px}
+.dismiss-title{font-size:16px;font-weight:500;color:var(--txt);margin-bottom:5px}
+.dismiss-desc{font-size:13px;color:var(--txt2);line-height:1.55;margin-bottom:16px}
+.dismiss-actions{display:flex;gap:8px}
+.dismiss-cancel{flex:1;padding:12px;border-radius:11px;border:0.5px solid var(--bdr2);background:var(--bg2);font-size:14px;font-weight:500;color:var(--txt2);cursor:pointer;font-family:inherit;text-align:center}
+.dismiss-confirm{flex:2;padding:12px;border-radius:11px;border:none;background:var(--red);color:#fff;font-size:14px;font-weight:500;cursor:pointer;font-family:inherit}
+</style>
+</head>
+<body>
+<div class="phone-wrap">
+  <div class="phone-frame">
+  <div class="phone">
+
+    <!-- STATUS BAR -->
+    <div class="status-bar">
+      <span class="status-time">9:41</span>
+      <div class="status-icons"><span>●●●</span><span>WiFi</span><span>100%</span></div>
+    </div>
+
+    <!-- ══════════ PAGE: 홈 ══════════ -->
+    <div class="page active" id="page-home">
+      <div class="scroll-area">
+
+        <div class="greeting-wrap">
+          <div class="greeting-date">2025년 6월 10일 화요일</div>
+          <div class="greeting-title">안녕하세요, 길동님 👋</div>
+          <div class="greeting-sub">오늘도 한 걸음씩 성장해봐요</div>
+        </div>
+
+        <!-- Goal Banner -->
+        <div class="goal-banner" style="margin-top:12px">
+          <div class="goal-banner-label">1년 목표</div>
+          <div class="goal-banner-text">시니어 레벨 성장 &<br>리더십 역량 첫 경험 확보</div>
+          <div class="goal-prog-wrap">
+            <div class="goal-prog-track"><div class="goal-prog-fill"></div></div>
+            <div class="goal-prog-pct">34% 달성</div>
+          </div>
+        </div>
+
+        <!-- 역량 카드 -->
+        <div class="card">
+          <div class="card-title">키워야 할 역량 <span style="font-size:11px;color:var(--accent);cursor:pointer">전체 보기</span></div>
+          <div class="comp-item" data-key="decision">
+            <div class="comp-row"><span class="comp-name">의사결정 & 실행력</span><span class="comp-pct" id="pct-decision">27%</span></div>
+            <div class="comp-track"><div class="comp-fill" id="bar-decision" style="width:27%"></div></div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-row"><span class="comp-name">커뮤니케이션 & 영향력</span><span class="comp-pct" id="pct-comm">41%</span></div>
+            <div class="comp-track"><div class="comp-fill" id="bar-comm" style="width:41%"></div></div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-row"><span class="comp-name">리더십 & 팀 빌딩</span><span class="comp-pct" id="pct-leader">37%</span></div>
+            <div class="comp-track"><div class="comp-fill" id="bar-leader" style="width:37%"></div></div>
+          </div>
+          <div class="comp-item">
+            <div class="comp-row"><span class="comp-name">도메인 전문성 심화</span><span class="comp-pct" id="pct-domain">57%</span></div>
+            <div class="comp-track"><div class="comp-fill" id="bar-domain" style="width:57%"></div></div>
+          </div>
+        </div>
+
+        <!-- 스트릭 -->
+        <div class="card">
+          <div class="card-title" style="margin-bottom:10px">이번 주 실행 스트릭</div>
+          <div class="streak-row">
+            <div class="streak-day"><div class="streak-dot done"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="streak-day-label">월</div></div>
+            <div class="streak-day"><div class="streak-dot done"><svg width="12" height="12" viewBox="0 0 12 12"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg></div><div class="streak-day-label">화</div></div>
+            <div class="streak-day"><div class="streak-dot today"></div><div class="streak-day-label">수</div></div>
+            <div class="streak-day"><div class="streak-dot"></div><div class="streak-day-label">목</div></div>
+            <div class="streak-day"><div class="streak-dot"></div><div class="streak-day-label">금</div></div>
+            <div class="streak-day"><div class="streak-dot"></div><div class="streak-day-label">토</div></div>
+            <div class="streak-day"><div class="streak-dot"></div><div class="streak-day-label">일</div></div>
+          </div>
+        </div>
+
+        <!-- 새 액션 배너 -->
+        <div class="refresh-banner" id="refreshBanner">
+          <div class="refresh-banner-icon"><svg width="15" height="15" viewBox="0 0 15 15" fill="none"><path d="M12.5 7.5A5 5 0 012.5 7.5M2.5 7.5A5 5 0 0112.5 7.5M2.5 7.5l-2-1.8M12.5 7.5l2-1.8" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg></div>
+          <div class="refresh-banner-txt">
+            <div class="refresh-banner-title">새로운 액션 아이템이 준비됐어요!</div>
+            <div class="refresh-banner-sub">할 일 3개를 완료했어요 🎉</div>
+          </div>
+          <div class="refresh-banner-btn" onclick="refreshActions()">보기</div>
+        </div>
+
+        <!-- 액션 아이템 -->
+        <div class="section-label">액션 아이템</div>
+
+        <!-- a1 -->
+        <div class="action-wrap" id="wrap-a1">
+          <div class="action-dismiss-bg"><div class="dismiss-hint"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#E24B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>추천 안 받기</div></div>
+          <div class="action-item" id="a1" onclick="checkAction(event,'a1','decision',3)">
+            <div class="action-check" id="c-a1"></div>
+            <div class="action-content">
+              <div class="action-title">팀 회의에서 의견을 먼저 제시해보기</div>
+              <div class="action-meta">
+                <span class="action-tag tag-routine">루틴</span>
+                <span class="action-tag tag-comp">의사결정 +3%</span>
+              </div>
+            </div>
+            <button class="action-dismiss-btn" onclick="openDismiss(event,'a1')"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7.5 3l3.5 3.5L7.5 10" stroke="#999" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </div>
+
+        <!-- a2 -->
+        <div class="action-wrap" id="wrap-a2">
+          <div class="action-dismiss-bg"><div class="dismiss-hint"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#E24B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>추천 안 받기</div></div>
+          <div class="action-item" id="a2" onclick="checkAction(event,'a2','comm',4)">
+            <div class="action-check" id="c-a2"></div>
+            <div class="action-content">
+              <div class="action-title">동료에게 내 업무 경과를 1문단으로 설명하기</div>
+              <div class="action-meta">
+                <span class="action-tag tag-routine">루틴</span>
+                <span class="action-tag tag-comp">커뮤니케이션 +4%</span>
+              </div>
+            </div>
+            <button class="action-dismiss-btn" onclick="openDismiss(event,'a2')"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7.5 3l3.5 3.5L7.5 10" stroke="#999" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </div>
+
+        <!-- a3 -->
+        <div class="action-wrap" id="wrap-a3">
+          <div class="action-dismiss-bg"><div class="dismiss-hint"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#E24B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>추천 안 받기</div></div>
+          <div class="action-item" id="a3" onclick="checkAction(event,'a3','leader',5)">
+            <div class="action-check" id="c-a3"></div>
+            <div class="action-content">
+              <div class="action-title">신규 팀원에게 온보딩 가이드 문서 만들어주기</div>
+              <div class="action-meta">
+                <span class="action-tag tag-once">1회</span>
+                <span class="action-tag tag-comp">리더십 +5%</span>
+              </div>
+            </div>
+            <button class="action-dismiss-btn" onclick="openDismiss(event,'a3')"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7.5 3l3.5 3.5L7.5 10" stroke="#999" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </div>
+
+        <!-- a4 -->
+        <div class="action-wrap" id="wrap-a4">
+          <div class="action-dismiss-bg"><div class="dismiss-hint"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#E24B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>추천 안 받기</div></div>
+          <div class="action-item" id="a4" onclick="checkAction(event,'a4','domain',3)">
+            <div class="action-check" id="c-a4"></div>
+            <div class="action-content">
+              <div class="action-title">업계 뉴스레터 1개 읽고 인사이트 메모하기</div>
+              <div class="action-meta">
+                <span class="action-tag tag-routine">루틴</span>
+                <span class="action-tag tag-comp">도메인 전문성 +3%</span>
+              </div>
+            </div>
+            <button class="action-dismiss-btn" onclick="openDismiss(event,'a4')"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7.5 3l3.5 3.5L7.5 10" stroke="#999" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </div>
+
+        <!-- a5 -->
+        <div class="action-wrap" id="wrap-a5">
+          <div class="action-dismiss-bg"><div class="dismiss-hint"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#E24B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>추천 안 받기</div></div>
+          <div class="action-item" id="a5" onclick="checkAction(event,'a5','comm',6)">
+            <div class="action-check" id="c-a5"></div>
+            <div class="action-content">
+              <div class="action-title">Generalist 강점 담은 LinkedIn 프로필 업데이트</div>
+              <div class="action-meta">
+                <span class="action-tag tag-once">1회</span>
+                <span class="action-tag tag-comp">커뮤니케이션 +6%</span>
+              </div>
+            </div>
+            <button class="action-dismiss-btn" onclick="openDismiss(event,'a5')"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7.5 3l3.5 3.5L7.5 10" stroke="#999" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </div>
+
+        <!-- a6 -->
+        <div class="action-wrap" id="wrap-a6">
+          <div class="action-dismiss-bg"><div class="dismiss-hint"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7h10M8 3l4 4-4 4" stroke="#E24B4A" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>추천 안 받기</div></div>
+          <div class="action-item" id="a6" onclick="checkAction(event,'a6','decision',4)">
+            <div class="action-check" id="c-a6"></div>
+            <div class="action-content">
+              <div class="action-title">작은 결정 3분 안에 내리는 연습 (하루 3회)</div>
+              <div class="action-meta">
+                <span class="action-tag tag-routine">루틴</span>
+                <span class="action-tag tag-comp">의사결정 +4%</span>
+              </div>
+            </div>
+            <button class="action-dismiss-btn" onclick="openDismiss(event,'a6')"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 6.5h9M7.5 3l3.5 3.5L7.5 10" stroke="#999" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          </div>
+        </div>
+
+      </div><!-- /scroll -->
+
+      <!-- FAB -->
+      <button class="fab" onclick="openFabSheet()">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2C5.58 2 2 5.58 2 10s3.58 8 8 8 8-3.58 8-8-3.58-8-8-8z" stroke="white" stroke-width="1.4"/><path d="M10 6v5l3 2.5" stroke="white" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </button>
+
+      <!-- Toast -->
+      <div class="toast" id="toast">
+        <div class="toast-icon"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="toast-body"><strong id="toast-title">역량 상승!</strong><span id="toast-sub"></span></div>
+      </div>
+
+      <!-- Dismiss confirm sheet -->
+      <div class="dismiss-overlay" id="dismissOverlay" onclick="closeDismissIfOut(event)">
+        <div class="dismiss-sheet">
+          <div class="dismiss-handle"></div>
+          <div class="dismiss-title">이 액션 아이템을 추천 안 받을까요?</div>
+          <div class="dismiss-desc" id="dismissDesc">앞으로 이 유형의 액션 아이템은 추천하지 않아요. AI가 다른 방향의 액션 아이템을 대신 제안해드릴게요.</div>
+          <div class="dismiss-actions">
+            <div class="dismiss-cancel" onclick="closeDismiss()">취소</div>
+            <button class="dismiss-confirm" onclick="confirmDismiss()">추천 안 받기</button>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /page-home -->
+
+    <!-- ══════════ PAGE: 회고 기록 ══════════ -->
+    <div class="page" id="page-retro">
+      <div class="retro-page-header">
+        <h2>회고 기록</h2>
+        <p>쌓인 회고가 나를 만들어가요</p>
+      </div>
+
+      <div class="scroll-area" style="padding-top:12px">
+
+        <!-- 키워드 필터 -->
+        <div style="font-size:11px;color:var(--txt2);margin-bottom:7px;font-weight:600;letter-spacing:.04em">키워드로 회고 찾기</div>
+        <div class="kw-row" style="margin-bottom:10px">
+          <span class="kw kw-p" style="cursor:pointer" onclick="filterKw(this,'전략가')">전략가</span>
+          <span class="kw kw-t" style="cursor:pointer" onclick="filterKw(this,'문제 해결')">문제 해결</span>
+          <span class="kw kw-b" style="cursor:pointer" onclick="filterKw(this,'학습')">학습</span>
+          <span class="kw kw-a" style="cursor:pointer" onclick="filterKw(this,'의사결정')">의사결정</span>
+          <span class="kw kw-p" style="cursor:pointer" onclick="filterKw(this,'커뮤니케이션')">커뮤니케이션</span>
+        </div>
+        <div class="kw-summary-card" id="kwSummaryCard">
+          <div class="kw-summary-title">"<span id="kwSummaryKw"></span>" 관련 사례 요약</div>
+          <div class="kw-summary-text" id="kwSummaryText"></div>
+          <div class="kw-summary-count" id="kwSummaryCount"></div>
+        </div>
+
+        <div class="log-section-label">최근 회고</div>
+
+        <div class="log-item">
+          <div class="log-date">6월 9일 월요일 · Keep</div>
+          <div class="log-text">팀 미팅에서 먼저 의견을 제시했는데 팀장님이 긍정적으로 받아주셔서 자신감이 생겼다.</div>
+          <div class="log-kws"><span class="kw kw-p" style="font-size:11px;padding:2px 8px">전략가</span><span class="kw kw-t" style="font-size:11px;padding:2px 8px">커뮤니케이션</span></div>
+        </div>
+        <div class="log-item problem">
+          <div class="log-date">6월 9일 월요일 · Problem</div>
+          <div class="log-text">보고서 초안을 작성하는 데 너무 오래 걸렸다. 완벽하게 쓰려는 성향이 또 발목을 잡았다.</div>
+          <div class="log-kws"><span class="kw kw-a" style="font-size:11px;padding:2px 8px">의사결정</span></div>
+        </div>
+        <div class="log-item try">
+          <div class="log-date">6월 9일 월요일 · Try</div>
+          <div class="log-text">다음엔 초안 완성에 30분 타이머 걸어보기. 완성보다 방향이 맞는지 먼저 확인하는 게 낫겠다.</div>
+          <div class="log-kws"><span class="kw kw-t" style="font-size:11px;padding:2px 8px">문제 해결</span><span class="kw kw-b" style="font-size:11px;padding:2px 8px">학습</span></div>
+        </div>
+        <div class="log-item">
+          <div class="log-date">6월 8일 일요일 · Keep</div>
+          <div class="log-text">업계 뉴스레터를 읽고 인사이트를 Notion에 정리했다. 꾸준히 이어가고 싶은 습관.</div>
+          <div class="log-kws"><span class="kw kw-b" style="font-size:11px;padding:2px 8px">학습</span><span class="kw kw-p" style="font-size:11px;padding:2px 8px">전략가</span></div>
+        </div>
+        <div class="log-item problem">
+          <div class="log-date">6월 8일 일요일 · Problem</div>
+          <div class="log-text">같은 팀 A 씨가 요청한 피드백을 미뤘다. 내 일이 아닌 것 같아서 에너지가 안 생겼다.</div>
+          <div class="log-kws"><span class="kw kw-a" style="font-size:11px;padding:2px 8px">의사결정</span><span class="kw kw-t" style="font-size:11px;padding:2px 8px">커뮤니케이션</span></div>
+        </div>
+        <div class="log-item">
+          <div class="log-date">6월 7일 토요일 · 기타</div>
+          <div class="log-text">Generalist로서 내 강점을 어떻게 포지셔닝할지 고민이 많다. AI 시대에 내가 남길 수 있는 가치가 뭔지 생각해봤다.</div>
+          <div class="log-kws"><span class="kw kw-p" style="font-size:11px;padding:2px 8px">전략가</span><span class="kw kw-b" style="font-size:11px;padding:2px 8px">학습</span></div>
+        </div>
+        <div class="log-item try">
+          <div class="log-date">6월 6일 금요일 · Try</div>
+          <div class="log-text">팀원에게 피드백 요청할 때 맥락을 먼저 설명하는 방식을 시도해봤다. 확실히 대화가 더 원활했다.</div>
+          <div class="log-kws"><span class="kw kw-t" style="font-size:11px;padding:2px 8px">커뮤니케이션</span><span class="kw kw-p" style="font-size:11px;padding:2px 8px">전략가</span></div>
+        </div>
+
+      </div><!-- /scroll -->
+
+      <!-- Toast (회고 탭) -->
+      <div class="toast" id="toast2">
+        <div class="toast-icon"><svg width="13" height="13" viewBox="0 0 13 13" fill="none"><path d="M2 7l3 3 6-6" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="toast-body"><strong>저장 완료!</strong><span id="toast2-sub">AI가 키워드와 연결했어요</span></div>
+      </div>
+
+    </div><!-- /page-retro -->
+
+    <!-- ══════════ FAB 회고 작성 시트 ══════════ -->
+    <div class="fab-overlay" id="fabOverlay" onclick="closeFabIfOut(event)">
+      <div class="fab-sheet" id="fabSheet">
+        <div class="fab-sheet-handle"></div>
+        <div class="fab-sheet-header">
+          <div>
+            <div class="fab-sheet-title">오늘의 회고</div>
+            <div class="fab-sheet-date">2025년 6월 10일 수요일</div>
+          </div>
+          <button class="fab-sheet-close" onclick="closeFabSheet()">×</button>
+        </div>
+        <div class="fab-sheet-body">
+
+          <div class="mode-toggle">
+            <button class="mode-btn active" id="modeText" onclick="switchMode('text')">✏️ 텍스트</button>
+            <button class="mode-btn" id="modeVoice" onclick="switchMode('voice')">🎙️ 음성</button>
+          </div>
+
+          <!-- text mode -->
+          <div id="textMode">
+            <textarea class="retro-input" id="retroText" placeholder="오늘 하루를 자유롭게 돌아봐요. 잘한 일, 아쉬운 점, 내일 해볼 것 등 편하게 적어주세요." rows="5"></textarea>
+            <div class="kw-map-preview" style="margin-top:10px;margin-bottom:14px">
+              <div style="font-size:11px;color:var(--txt2);margin-bottom:6px">AI가 연결할 키워드 예시</div>
+              <div class="kw-row" id="kwMapRow">
+                <span class="kw kw-p">전략가</span>
+                <span class="kw kw-t">문제 해결</span>
+                <span class="kw kw-b">학습 민첩성</span>
+              </div>
+            </div>
+            <!-- 가이드라인 (텍스트 입력란 아래로 이동) -->
+            <div class="retro-guideline">
+              <div class="retro-guideline-title">이런 기준으로 작성하면 좋아요</div>
+              <div class="retro-guideline-items">
+                <div class="retro-guideline-item">
+                  <span class="guideline-badge keep">Keep</span>
+                  <span class="guideline-text">오늘 잘한 일, 앞으로도 계속하고 싶은 것</span>
+                </div>
+                <div class="retro-guideline-item">
+                  <span class="guideline-badge problem">Problem</span>
+                  <span class="guideline-text">아쉬웠던 점, 개선하고 싶은 것</span>
+                </div>
+                <div class="retro-guideline-item">
+                  <span class="guideline-badge try">Try</span>
+                  <span class="guideline-text">다음에 시도해보고 싶은 것</span>
+                </div>
+                <div class="retro-guideline-item">
+                  <span class="guideline-badge free">기타</span>
+                  <span class="guideline-text">오늘 있었던 일을 자유롭게</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- voice mode -->
+          <div id="voiceMode" style="display:none">
+            <div class="voice-area">
+              <div class="retro-waveform idle" id="retroWaveform">
+                <div class="retro-wave-bar"></div><div class="retro-wave-bar"></div>
+                <div class="retro-wave-bar"></div><div class="retro-wave-bar"></div>
+                <div class="retro-wave-bar"></div><div class="retro-wave-bar"></div>
+              </div>
+              <button class="retro-mic-btn" id="retroMic" onclick="toggleRetroMic()">
+                <svg width="22" height="22" viewBox="0 0 22 22" fill="none"><rect x="8" y="2" width="6" height="10" rx="3" fill="white"/><path d="M4 11a7 7 0 0014 0" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="11" y1="18" x2="11" y2="21" stroke="white" stroke-width="1.5" stroke-linecap="round"/><line x1="8" y1="21" x2="14" y2="21" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </button>
+              <div class="retro-voice-hint" id="retroVoiceHint">버튼을 눌러 오늘 하루를 이야기해보세요</div>
+            </div>
+            <div class="retro-guideline" style="margin-top:4px">
+              <div class="retro-guideline-title">이런 기준으로 이야기하면 좋아요</div>
+              <div class="retro-guideline-items">
+                <div class="retro-guideline-item">
+                  <span class="guideline-badge keep">Keep</span>
+                  <span class="guideline-text">오늘 잘한 일, 앞으로도 계속하고 싶은 것</span>
+                </div>
+                <div class="retro-guideline-item">
+                  <span class="guideline-badge problem">Problem</span>
+                  <span class="guideline-text">아쉬웠던 점, 개선하고 싶은 것</span>
+                </div>
+                <div class="retro-guideline-item">
+                  <span class="guideline-badge try">Try</span>
+                  <span class="guideline-text">다음에 시도해보고 싶은 것</span>
+                </div>
+                <div class="retro-guideline-item">
+                  <span class="guideline-badge free">기타</span>
+                  <span class="guideline-text">오늘 있었던 일을 자유롭게</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button class="retro-save-btn" onclick="saveRetro()">회고 저장하기</button>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ══════════ PAGE: 프로필 ══════════ -->
+    <div class="page" id="page-profile">
+      <div class="scroll-area" style="padding-top:20px">
+        <div style="text-align:center;padding:24px 0 16px">
+          <div style="width:64px;height:64px;border-radius:50%;background:var(--accent-l);border:2px solid var(--accent-m);display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none"><circle cx="14" cy="10" r="5" fill="var(--accent)"/><path d="M4 24c0-5.523 4.477-10 10-10s10 4.477 10 10" stroke="var(--accent)" stroke-width="1.5" fill="none" stroke-linecap="round"/></svg>
+          </div>
+          <div style="font-size:17px;font-weight:500;color:var(--txt)">홍길동</div>
+          <div style="font-size:13px;color:var(--txt2);margin-top:3px">SaaS 스타트업 · 프로덕트 매니저 · 3~5년차</div>
+        </div>
+        <div class="card">
+          <div class="card-title">나를 정의하는 키워드</div>
+          <div class="kw-row"><span class="kw kw-p">전략가</span><span class="kw kw-t">학습자</span><span class="kw kw-b">분석형 크리에이터</span><span class="kw kw-a">성장 지향</span></div>
+        </div>
+        <div class="card">
+          <div class="card-title">목표 로드맵</div>
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <div style="display:flex;align-items:flex-start;gap:10px;background:var(--bg2);border-radius:10px;padding:10px"><span style="font-size:11px;font-weight:500;color:var(--accent-d);background:var(--accent-l);border-radius:6px;padding:2px 8px;white-space:nowrap;flex-shrink:0;margin-top:1px">1년 후</span><span style="font-size:13px;color:var(--txt);line-height:1.5">시니어 레벨 성장, 리더십 역량 첫 경험 확보</span></div>
+            <div style="display:flex;align-items:flex-start;gap:10px;background:var(--bg2);border-radius:10px;padding:10px"><span style="font-size:11px;font-weight:500;color:var(--accent-d);background:var(--accent-l);border-radius:6px;padding:2px 8px;white-space:nowrap;flex-shrink:0;margin-top:1px">3년 후</span><span style="font-size:13px;color:var(--txt);line-height:1.5">팀 리드 역할 수행, 도메인 전문성 심화</span></div>
+            <div style="display:flex;align-items:flex-start;gap:10px;background:var(--bg2);border-radius:10px;padding:10px"><span style="font-size:11px;font-weight:500;color:var(--accent-d);background:var(--accent-l);border-radius:6px;padding:2px 8px;white-space:nowrap;flex-shrink:0;margin-top:1px">5년 후</span><span style="font-size:13px;color:var(--txt);line-height:1.5">독립적 프로덕트 오너십, 외부 영향력 확장</span></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">진단 결과 요약</div>
+          <div style="font-size:13px;color:var(--txt);line-height:1.7">전략적 사고와 분석 역량은 탁월하지만, 커리어 방향성에 대한 확신이 낮고 실행 측면에서 자신감이 부족한 상태입니다.</div>
+        </div>
+      </div>
+    </div><!-- /page-profile -->
+
+    <!-- ══════════ SHARED TAB BAR ══════════ -->
+    <div class="tab-bar">
+      <div class="tab-item active" id="gnb-home" onclick="switchPage('home')">
+        <div class="tab-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" id="icon-home">
+            <rect x="2" y="2" width="8" height="8" rx="2" fill="#7F77DD"/>
+            <rect x="12" y="2" width="8" height="8" rx="2" fill="#EEEDFE"/>
+            <rect x="2" y="12" width="8" height="8" rx="2" fill="#EEEDFE"/>
+            <rect x="12" y="12" width="8" height="8" rx="2" fill="#EEEDFE"/>
+          </svg>
+        </div>
+        <div class="tab-label">홈</div>
+      </div>
+      <div class="tab-item" id="gnb-retro" onclick="switchPage('retro')">
+        <div class="tab-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" id="icon-retro">
+            <circle cx="11" cy="11" r="8" stroke="#888" stroke-width="1.5"/>
+            <path d="M11 7v5l3 2.5" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="tab-label">회고</div>
+      </div>
+      <div class="tab-item" id="gnb-profile" onclick="switchPage('profile')">
+        <div class="tab-icon">
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none" id="icon-profile">
+            <circle cx="11" cy="8" r="3.5" stroke="#888" stroke-width="1.5"/>
+            <path d="M4 19c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="tab-label">프로필</div>
+      </div>
+    </div>
+
+  </div><!-- /phone -->
+  </div><!-- /phone-frame -->
+</div><!-- /phone-wrap -->
+
+<script>
+/* ──────── Page switching ──────── */
+var currentPage = 'home';
+var pages = ['home','retro','profile'];
+
+var tabIcons = {
+  home: {
+    active: '<rect x="2" y="2" width="8" height="8" rx="2" fill="#7F77DD"/><rect x="12" y="2" width="8" height="8" rx="2" fill="#EEEDFE"/><rect x="2" y="12" width="8" height="8" rx="2" fill="#EEEDFE"/><rect x="12" y="12" width="8" height="8" rx="2" fill="#EEEDFE"/>',
+    inactive: '<rect x="2" y="2" width="8" height="8" rx="2" fill="#EEEDFE"/><rect x="12" y="2" width="8" height="8" rx="2" fill="#EEEDFE"/><rect x="2" y="12" width="8" height="8" rx="2" fill="#EEEDFE"/><rect x="12" y="12" width="8" height="8" rx="2" fill="#EEEDFE"/>'
+  },
+  retro: {
+    active: '<circle cx="11" cy="11" r="8" stroke="#7F77DD" stroke-width="1.5"/><path d="M11 7v5l3 2.5" stroke="#7F77DD" stroke-width="1.5" stroke-linecap="round"/>',
+    inactive: '<circle cx="11" cy="11" r="8" stroke="#888" stroke-width="1.5"/><path d="M11 7v5l3 2.5" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>'
+  },
+  profile: {
+    active: '<circle cx="11" cy="8" r="3.5" stroke="#7F77DD" stroke-width="1.5"/><path d="M4 19c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="#7F77DD" stroke-width="1.5" stroke-linecap="round"/>',
+    inactive: '<circle cx="11" cy="8" r="3.5" stroke="#888" stroke-width="1.5"/><path d="M4 19c0-3.866 3.134-7 7-7s7 3.134 7 7" stroke="#888" stroke-width="1.5" stroke-linecap="round"/>'
+  }
+};
+
+function switchPage(name) {
+  pages.forEach(function(p) {
+    var page = document.getElementById('page-' + p);
+    var gnb  = document.getElementById('gnb-' + p);
+    var icon = document.getElementById('icon-' + p);
+    if (p === name) {
+      page.classList.add('active');
+      gnb.classList.add('active');
+      icon.innerHTML = tabIcons[p].active;
+    } else {
+      page.classList.remove('active');
+      gnb.classList.remove('active');
+      icon.innerHTML = tabIcons[p].inactive;
+    }
+  });
+  currentPage = name;
+}
+
+/* ──────── Competency ──────── */
+var compData = {
+  decision: {label:'의사결정 & 실행력', pct:27},
+  comm:     {label:'커뮤니케이션 & 영향력', pct:41},
+  leader:   {label:'리더십 & 팀 빌딩', pct:37},
+  domain:   {label:'도메인 전문성 심화', pct:57}
+};
+var doneCount = 0;
+
+function checkAction(e, id, compKey, gain) {
+  if (e.target.closest('.action-dismiss-btn')) return;
+  var item = document.getElementById(id);
+  if (item.classList.contains('done')) return;
+  item.classList.add('done');
+  document.getElementById('c-' + id).innerHTML = '<svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M2 6l3 3 5-5" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  var d = compData[compKey];
+  d.pct = Math.min(100, d.pct + gain);
+  var barEl = document.getElementById('bar-' + compKey);
+  var pctEl = document.getElementById('pct-' + compKey);
+  if (barEl) { barEl.style.width = d.pct + '%'; pctEl.textContent = d.pct + '%'; }
+  showToast('home', d.label + ' +' + gain + '%');
+  doneCount++;
+  if (doneCount >= 3) document.getElementById('refreshBanner').style.display = 'flex';
+}
+
+function refreshActions() {
+  document.getElementById('refreshBanner').style.display = 'none';
+  showToast('home', '새 액션 아이템이 추가됐어요');
+}
+
+/* ──────── Toast ──────── */
+var toastTimer = null;
+function showToast(page, msg) {
+  var id = page === 'retro' ? 'toast2' : 'toast';
+  var subId = page === 'retro' ? 'toast2-sub' : 'toast-sub';
+  var t = document.getElementById(id);
+  document.getElementById(subId).textContent = msg;
+  t.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ t.classList.remove('show'); }, 2800);
+}
+
+/* ──────── Dismiss sheet ──────── */
+var pendingDismiss = null;
+var actionTitles = {
+  a1: '팀 회의에서 의견을 먼저 제시해보기',
+  a2: '동료에게 내 업무 경과를 1문단으로 설명하기',
+  a3: '신규 팀원에게 온보딩 가이드 문서 만들어주기',
+  a4: '업계 뉴스레터 1개 읽고 인사이트 메모하기',
+  a5: 'Generalist 강점 담은 LinkedIn 프로필 업데이트',
+  a6: '작은 결정 3분 안에 내리는 연습 (하루 3회)'
+};
+
+function openDismiss(e, id) {
+  e.stopPropagation();
+  pendingDismiss = id;
+  document.getElementById('dismissDesc').textContent = '"' + actionTitles[id] + '" 유형은 앞으로 추천하지 않아요. AI가 다른 방향의 액션 아이템을 대신 제안해드릴게요.';
+  document.getElementById('dismissOverlay').classList.add('open');
+}
+function closeDismissIfOut(e) {
+  if (e.target === document.getElementById('dismissOverlay')) closeDismiss();
+}
+function closeDismiss() {
+  document.getElementById('dismissOverlay').classList.remove('open');
+  pendingDismiss = null;
+}
+function confirmDismiss() {
+  if (!pendingDismiss) return;
+  var wrap = document.getElementById('wrap-' + pendingDismiss);
+  var item = document.getElementById(pendingDismiss);
+  item.classList.add('dismissed');
+  setTimeout(function() {
+    wrap.style.maxHeight = wrap.offsetHeight + 'px';
+    wrap.style.overflow = 'hidden';
+    wrap.style.transition = 'max-height .3s ease, opacity .3s ease, margin .3s ease';
+    setTimeout(function() {
+      wrap.style.maxHeight = '0';
+      wrap.style.opacity = '0';
+      wrap.style.marginBottom = '0';
+    }, 20);
+  }, 200);
+  closeDismiss();
+  showToast('home', '이 유형은 더 이상 추천하지 않아요');
+}
+
+/* ──────── Retro: KPT tabs ──────── */
+var kptGuides = {
+  keep:    {label:'KEEP 가이드',    q:'오늘 한 일 중에 앞으로도 하고 싶은, 잘한 일은 무엇인가요?'},
+  problem: {label:'PROBLEM 가이드', q:'오늘 한 일 중 아쉽거나 개선하고 싶은 점은 무엇인가요?'},
+  try:     {label:'TRY 가이드',     q:'다음에 시도해보면 좋을 것 같은 일은 무엇인가요?'},
+  free:    {label:'기타',           q:'오늘 있었던 일을 자유롭게 남겨주세요.'}
+};
+var kwMaps = {
+  keep:    ['<span class="kw kw-p">전략가</span>','<span class="kw kw-t">문제 해결</span>','<span class="kw kw-b">학습 민첩성</span>'],
+  problem: ['<span class="kw kw-a">의사결정</span>','<span class="kw kw-p">개선 영역</span>'],
+  try:     ['<span class="kw kw-t">문제 해결</span>','<span class="kw kw-b">학습</span>'],
+  free:    ['<span class="kw kw-p">전략가</span>','<span class="kw kw-a">성장 지향</span>']
+};
+
+function switchKpt(tab) {
+  ['keep','problem','try','free'].forEach(function(t){
+    document.getElementById('tab-'+t).classList.toggle('active', t===tab);
+  });
+  var g = kptGuides[tab];
+  document.getElementById('guideLabel').textContent = g.label;
+  document.getElementById('guideQ').textContent = g.q;
+  document.getElementById('voiceGuideLabel').textContent = g.label;
+  document.getElementById('voiceGuideQ').textContent = g.q;
+  document.getElementById('retroText').value = '';
+  document.getElementById('kwMapRow').innerHTML = kwMaps[tab].join('');
+}
+
+function updateMappingPreview() {
+  /* dynamic — kept simple for prototype */
+}
+
+/* ──────── Retro: mode ──────── */
+function switchMode(m) {
+  var isText = m === 'text';
+  document.getElementById('modeText').classList.toggle('active', isText);
+  document.getElementById('modeVoice').classList.toggle('active', !isText);
+  document.getElementById('textMode').style.display = isText ? 'block' : 'none';
+  document.getElementById('voiceMode').style.display = isText ? 'none' : 'block';
+}
+
+/* ──────── Voice mic ──────── */
+var micOn = false;
+function toggleRetroMic() {
+  micOn = !micOn;
+  var mic = document.getElementById('retroMic');
+  var wf  = document.getElementById('retroWaveform');
+  var hint= document.getElementById('retroVoiceHint');
+  mic.classList.toggle('rec', micOn);
+  wf.classList.toggle('idle', !micOn);
+  hint.textContent = micOn ? '녹음 중... 버튼을 눌러 종료' : '✓ 음성 저장됨. 저장 버튼으로 완료하세요.';
+}
+
+/* ──────── FAB sheet ──────── */
+function openFabSheet() {
+  document.getElementById('fabOverlay').classList.add('open');
+}
+function closeFabSheet() {
+  document.getElementById('fabOverlay').classList.remove('open');
+}
+function closeFabIfOut(e) {
+  if (e.target === document.getElementById('fabOverlay')) closeFabSheet();
+}
+
+/* ──────── Save retro ──────── */
+function saveRetro() {
+  document.getElementById('retroText').value = '';
+  closeFabSheet();
+  setTimeout(function(){ showToast('home', 'AI가 키워드와 연결했어요'); }, 300);
+}
+
+/* ──────── Keyword filter ──────── */
+var kwSummaries = {
+  '전략가':       {text:'3번의 회고에서 전략적 접근이 언급됨. 팀 미팅 의견 제시, 뉴스레터 인사이트 정리, Generalist 포지셔닝 고민에서 공통적으로 "큰 그림을 먼저 보려는" 패턴이 나타남.', count:'관련 회고 3건'},
+  '문제 해결':    {text:'Problem/Try 탭에서 2번 반복 등장. 시간 제한을 두는 실험적 해결 방식, 완벽주의를 의식하는 메타인지가 강점으로 확인됨.', count:'관련 회고 2건'},
+  '학습':         {text:'꾸준한 뉴스레터 읽기, Notion 정리 습관, AI 시대 자기 포지셔닝 고민 등 4건의 회고에 걸쳐 "능동적 학습자" 패턴이 일관되게 나타남.', count:'관련 회고 4건'},
+  '의사결정':     {text:'2건의 Problem 회고에서 완벽주의로 인한 지연이 반복 언급됨. "30분 타이머" 실험은 스스로 해결책을 찾아가는 긍정적 신호.', count:'관련 회고 2건'},
+  '커뮤니케이션': {text:'팀 미팅에서의 적극적 의견 제시(성공)와 동료 피드백 지연(개선 필요)이 대비됨. 외향적 커뮤니케이션은 성장 중인 영역.', count:'관련 회고 2건'}
+};
+var activeKw = null;
+function filterKw(el, kw) {
+  if (activeKw === kw) {
+    activeKw = null;
+    document.getElementById('kwSummaryCard').style.display = 'none';
+    el.style.outline = '';
+    return;
+  }
+  activeKw = kw;
+  document.querySelectorAll('.kw[onclick]').forEach(function(k){ k.style.outline=''; });
+  el.style.outline = '2px solid currentColor';
+  var s = kwSummaries[kw];
+  document.getElementById('kwSummaryKw').textContent = kw;
+  document.getElementById('kwSummaryText').textContent = s.text;
+  document.getElementById('kwSummaryCount').textContent = s.count;
+  document.getElementById('kwSummaryCard').style.display = 'block';
+}
+</script>
+</body>
+</html>
